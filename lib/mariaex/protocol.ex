@@ -403,7 +403,7 @@ defmodule Mariaex.Protocol do
   end
   defp handle_text_query(packet(msg: eof_resp()) = msg, query, s = %{catch_eof: catch_eof}) do
     if catch_eof do
-      text_query_recv(%{s | state: :text_rows}, query)
+      text_query_recv(%{s | state: :text_rows, catch_eof: false}, query)
     else
       {:packet, _, _, {:eof_resp, _, _, status_flags, _}, _} = msg
       this_result = {%Mariaex.Result{rows: s.rows}, query.types}
