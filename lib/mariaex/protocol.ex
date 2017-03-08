@@ -212,7 +212,7 @@ defmodule Mariaex.Protocol do
   @doc """
   DBConnection callback
   """
-  def disconnect(_, state = %{sock: {sock_mod, sock}}) do
+  def disconnect(_, state = %{sock: {sock_mod, sock}, lru_cache: cache}) do
     msg_send(text_cmd(command: com_quit(), statement: ""), state, 0)
     case msg_recv(state) do
       {:ok, packet(msg: ok_resp())} ->
@@ -223,6 +223,7 @@ defmodule Mariaex.Protocol do
         :ok
     end
     _ = sock_mod.recv_active(sock, 0, "")
+    LruCache.delete_cache(cache)
     :ok
   end
 

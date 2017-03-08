@@ -43,4 +43,8 @@ defmodule Mariaex.LruCache do
     cleanup.(statement, data)
     :ets.delete(cache, statement)
   end
+
+  def delete_cache({_, cache}) do
+    :ets.delete(cache)
+  end
 end
