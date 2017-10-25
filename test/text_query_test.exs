@@ -1,12 +1,12 @@
 defmodule TextQueryTest do
   use ExUnit.Case, async: true
-  import Mariaex.TestHelper
+  import Sphinxex.TestHelper
 
   setup_all do
     opts = [database: "mariaex_test", username: "mariaex_user", password: "mariaex_pass", backoff_type: :stop]
-    {:ok, pid} = Mariaex.Connection.start_link(opts)
+    {:ok, pid} = Sphinxex.Connection.start_link(opts)
     # drop = "DROP TABLE IF EXISTS test"
-    # {:ok, _} = Mariaex.execute(pid, %Mariaex.Query{type: :text, statement: drop}, [])
+    # {:ok, _} = Sphinxex.execute(pid, %Sphinxex.Query{type: :text, statement: drop}, [])
     create = """
     CREATE TABLE test_text_query_table (
     id serial,
@@ -19,14 +19,14 @@ defmodule TextQueryTest do
     dt datetime
     )
     """
-    {:ok, _} = Mariaex.execute(pid, %Mariaex.Query{type: :text, statement: create}, [])
+    {:ok, _} = Sphinxex.execute(pid, %Sphinxex.Query{type: :text, statement: create}, [])
     insert = """
     INSERT INTO test_text_query_table (id, bools, bits, varchars, texts, floats, ts, dt)
     VALUES
     (1, true, b'10', 'hello', 'world', 1.1, '2016-09-26 16:36:06', '0001-01-01 00:00:00'),
     (2, false, b'11', 'goodbye', 'earth', 1.2, '2016-09-26T16:36:07', '0001-01-01 00:00:01')
     """
-    {:ok, _} = Mariaex.execute(pid, %Mariaex.Query{type: :text, statement: insert}, [])
+    {:ok, _} = Sphinxex.execute(pid, %Sphinxex.Query{type: :text, statement: insert}, [])
     {:ok, [pid: pid]}
   end
 
@@ -75,17 +75,17 @@ defmodule TextQueryTest do
     # rows are consed onto the front, so they are backwards
     rows = [["Goodbye", "2", "0.11111"],
             ["Hello", "1", "2.0000"]] |> Enum.map(&(length_encode_row/1))
-    res = %Mariaex.Result{
+    res = %Sphinxex.Result{
       columns: nil, command: nil, connection_id: nil, last_insert_id: nil, num_rows: nil, rows: rows}
     types = [
-      %Mariaex.Column{flags: 0, name: "someFloat", table: "", type: 4},
-      %Mariaex.Column{flags: 0, name: "someInt", table: "", type: 2},
-      %Mariaex.Column{flags: 0, name: "someText", table: "", type: 254},
+      %Sphinxex.Column{flags: 0, name: "someFloat", table: "", type: 4},
+      %Sphinxex.Column{flags: 0, name: "someInt", table: "", type: 2},
+      %Sphinxex.Column{flags: 0, name: "someText", table: "", type: 254},
     ]
-    qry = %Mariaex.Query{type: :text,
+    qry = %Sphinxex.Query{type: :text,
                          statement: "SELECT someText, someInt, someFloat FROM someTable"}
     obs = DBConnection.Query.decode(qry, {res, types}, [])
-    exp = %Mariaex.Result{res |
+    exp = %Sphinxex.Result{res |
                           rows: [["Hello", 1, 2.0000], ["Goodbye", 2, 0.11111]],
                           columns: ["someText", "someInt", "someFloat"],
                           num_rows: 2,

@@ -1,4 +1,4 @@
-defmodule Mariaex.Result do
+defmodule Sphinxex.Result do
   @moduledoc """
   Result struct returned from any successful query. Its fields are:
 
@@ -21,7 +21,7 @@ defmodule Mariaex.Result do
   defstruct [:command, :columns, :rows, :last_insert_id, :num_rows, :connection_id]
 end
 
-defmodule Mariaex.Error do
+defmodule Sphinxex.Error do
   defexception [:message, :tag, :action, :reason, :mariadb, :connection_id]
 
   def message(e) do

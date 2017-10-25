@@ -1,4 +1,4 @@
-defmodule Mariaex.LruCache do
+defmodule Sphinxex.LruCache do
   @moduledoc """
   Implements LRU cache for queries.
   """

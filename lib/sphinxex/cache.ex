@@ -1,4 +1,4 @@
-defmodule Mariaex.Cache do
+defmodule Sphinxex.Cache do
   @moduledoc """
   Simple cache for named queries
   """

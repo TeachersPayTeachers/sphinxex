@@ -54,25 +54,25 @@ Enum.each(cmds, fn cmd ->
   end
 end)
 
-defmodule Mariaex.TestHelper do
+defmodule Sphinxex.TestHelper do
   defmacro query(stat, params, opts \\ []) do
     quote do
-      case Mariaex.Connection.query(var!(context)[:pid], unquote(stat),
+      case Sphinxex.Connection.query(var!(context)[:pid], unquote(stat),
                                      unquote(params), unquote(opts)) do
-        {:ok, %Mariaex.Result{rows: nil}} -> :ok
-        {:ok, %Mariaex.Result{rows: rows}} -> rows
-        {:error, %Mariaex.Error{} = err} -> err
+        {:ok, %Sphinxex.Result{rows: nil}} -> :ok
+        {:ok, %Sphinxex.Result{rows: rows}} -> rows
+        {:error, %Sphinxex.Error{} = err} -> err
       end
     end
   end
 
   defmacro execute_text(stat, params, opts \\ []) do
     quote do
-      case Mariaex.execute(var!(context)[:pid], %Mariaex.Query{type: :text, statement: unquote(stat)},
+      case Sphinxex.execute(var!(context)[:pid], %Sphinxex.Query{type: :text, statement: unquote(stat)},
             unquote(params), unquote(opts)) do
-        {:ok, %Mariaex.Result{rows: nil}} -> :ok
-        {:ok, %Mariaex.Result{rows: rows}} -> rows
-        {:error, %Mariaex.Error{} = err} -> err
+        {:ok, %Sphinxex.Result{rows: nil}} -> :ok
+        {:ok, %Sphinxex.Result{rows: rows}} -> rows
+        {:error, %Sphinxex.Error{} = err} -> err
       end
     end
   end
@@ -80,10 +80,10 @@ defmodule Mariaex.TestHelper do
   defmacro with_prepare!(name, stat, params, opts \\ []) do
     quote do
       conn = var!(context)[:pid]
-      query = Mariaex.prepare!(conn, unquote(name), unquote(stat), unquote(opts))
-      case Mariaex.execute!(conn, query, unquote(params)) do
-        %Mariaex.Result{rows: nil} -> :ok
-        %Mariaex.Result{rows: rows} -> rows
+      query = Sphinxex.prepare!(conn, unquote(name), unquote(stat), unquote(opts))
+      case Sphinxex.execute!(conn, query, unquote(params)) do
+        %Sphinxex.Result{rows: nil} -> :ok
+        %Sphinxex.Result{rows: rows} -> rows
       end
     end
   end

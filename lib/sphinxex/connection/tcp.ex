@@ -1,4 +1,4 @@
-defmodule Mariaex.Connection.Tcp do
+defmodule Sphinxex.Connection.Tcp do
   def connect(host, port, socket_options, timeout) do
     sock_opts = [{:packet, :raw}, :binary, active: :false] ++ socket_options
     case :gen_tcp.connect(host, port, sock_opts, timeout) do

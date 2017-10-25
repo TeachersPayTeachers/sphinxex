@@ -1,10 +1,10 @@
-defmodule Mariaex do
+defmodule Sphinxex do
   @moduledoc """
-  Main API for Mariaex.
+  Main API for Sphinxex.
   """
 
-  alias Mariaex.Protocol
-  alias Mariaex.Query
+  alias Sphinxex.Protocol
+  alias Sphinxex.Query
 
   @timeout 5000
   @keepalive false
@@ -84,22 +84,22 @@ defmodule Mariaex do
       @spec formatter(info :: TypeInfo.t) ::
             :binary | :text | nil
   """
-  @spec start_link(Keyword.t) :: {:ok, pid} | {:error, Mariaex.Error.t | term}
+  @spec start_link(Keyword.t) :: {:ok, pid} | {:error, Sphinxex.Error.t | term}
   def start_link(opts) do
     DBConnection.start_link(Protocol, opts)
   end
 
   @doc """
-  Runs an (extended) query and returns the result as `{:ok, %Mariaex.Result{}}`
-  or `{:error, %Mariaex.Error{}}` if there was an error. Parameters can be
+  Runs an (extended) query and returns the result as `{:ok, %Sphinxex.Result{}}`
+  or `{:error, %Sphinxex.Error{}}` if there was an error. Parameters can be
   set in the query as `?` embedded in the query string. Parameters are given as
-  a list of elixir values. See the README for information on how Mariaex
-  encodes and decodes elixir values by default. See `Mariaex.Result` for the
+  a list of elixir values. See the README for information on how Sphinxex
+  encodes and decodes elixir values by default. See `Sphinxex.Result` for the
   result data.
 
   A *type hinted* query is run if both the options `:param_types` and
   `:result_types` are given. One client-server round trip can be saved by
-  providing the types to Mariaex because the server doesn't have to be queried
+  providing the types to Sphinxex because the server doesn't have to be queried
   for the types of the parameters and the result.
 
   ## Options
@@ -125,19 +125,19 @@ defmodule Mariaex do
 
   ## Examples
 
-      Mariaex.query(pid, "CREATE TABLE posts (id serial, title text)")
+      Sphinxex.query(pid, "CREATE TABLE posts (id serial, title text)")
 
-      Mariaex.query(pid, "INSERT INTO posts (title) VALUES ('my title')")
+      Sphinxex.query(pid, "INSERT INTO posts (title) VALUES ('my title')")
 
-      Mariaex.query(pid, "SELECT title FROM posts", [])
+      Sphinxex.query(pid, "SELECT title FROM posts", [])
 
-      Mariaex.query(pid, "SELECT id FROM posts WHERE title like ?", ["%my%"])
+      Sphinxex.query(pid, "SELECT id FROM posts WHERE title like ?", ["%my%"])
 
-      Mariaex.query(pid, "SELECT ? || ?", ["4", "2"],
+      Sphinxex.query(pid, "SELECT ? || ?", ["4", "2"],
                                 param_types: ["text", "text"], result_types: ["text"])
 
   """
-  @spec query(conn, iodata, list, Keyword.t) :: {:ok, Mariaex.Result.t} | {:error, Mariaex.Error.t}
+  @spec query(conn, iodata, list, Keyword.t) :: {:ok, Sphinxex.Result.t} | {:error, Sphinxex.Error.t}
   def query(conn, statement, params \\ [], opts \\ []) do
     case DBConnection.prepare_execute(conn, %Query{statement: statement}, params, defaults(opts)) do
       {:ok, _, result} ->
@@ -150,7 +150,7 @@ defmodule Mariaex do
   end
 
   @doc """
-  Runs an (extended) query and returns the result or raises `Mariaex.Error` if
+  Runs an (extended) query and returns the result or raises `Sphinxex.Error` if
   there was an error. See `query/3`.
   """
   def query!(conn, statement, params \\ [], opts \\ []) do
@@ -160,10 +160,10 @@ defmodule Mariaex do
 
   @doc """
   Prepares an query and returns the result as
-  `{:ok, %Mariaex.Query{}}` or `{:error, %Mariaex.Error{}}` if there was an
+  `{:ok, %Sphinxex.Query{}}` or `{:error, %Sphinxex.Error{}}` if there was an
   error. Parameters can be set in the query as `?` embedded in the query
   string. To execute the query call `execute/4`. To close the prepared query
-  call `close/3`. See `Mariaex.Query` for the query data.
+  call `close/3`. See `Sphinxex.Query` for the query data.
 
   ## Options
 
@@ -176,9 +176,9 @@ defmodule Mariaex do
 
   ## Examples
 
-      Mariaex.prepare(conn, "CREATE TABLE posts (id serial, title text)")
+      Sphinxex.prepare(conn, "CREATE TABLE posts (id serial, title text)")
   """
-  @spec prepare(conn, iodata, iodata, Keyword.t) :: {:ok, Mariaex.Query.t} | {:error, Mariaex.Error.t}
+  @spec prepare(conn, iodata, iodata, Keyword.t) :: {:ok, Sphinxex.Query.t} | {:error, Sphinxex.Error.t}
   def prepare(conn, name, statement, opts \\ []) do
     query = %Query{name: name, statement: statement}
     DBConnection.prepare(conn, query, defaults(opts))
@@ -187,9 +187,9 @@ defmodule Mariaex do
 
   @doc """
   Prepared an (extended) query and returns the prepared query or raises
-  `Mariaex.Error` if there was an error. See `prepare/4`.
+  `Sphinxex.Error` if there was an error. See `prepare/4`.
   """
-  @spec prepare!(conn, iodata, iodata, Keyword.t) :: Mariaex.Query.t
+  @spec prepare!(conn, iodata, iodata, Keyword.t) :: Sphinxex.Query.t
   def prepare!(conn, name, statement, opts \\ []) do
     query = %Query{name: name, statement: statement}
     DBConnection.prepare!(conn, query, defaults(opts))
@@ -197,11 +197,11 @@ defmodule Mariaex do
 
   @doc """
   Runs an (extended) prepared query and returns the result as
-  `{:ok, %Mariaex.Result{}}` or `{:error, %Mariaex.Error{}}` if there was an
-  error. Parameters are given as part of the prepared query, `%Mariaex.Query{}`.
-  See the README for information on how Mariaex encodes and decodes Elixir
-  values by default. See `Mariaex.Query` for the query data and
-  `Mariaex.Result` for the result data.
+  `{:ok, %Sphinxex.Result{}}` or `{:error, %Sphinxex.Error{}}` if there was an
+  error. Parameters are given as part of the prepared query, `%Sphinxex.Query{}`.
+  See the README for information on how Sphinxex encodes and decodes Elixir
+  values by default. See `Sphinxex.Query` for the query data and
+  `Sphinxex.Result` for the result data.
 
   ## Options
 
@@ -216,14 +216,14 @@ defmodule Mariaex do
 
   ## Examples
 
-      query = Mariaex.prepare!(conn, "CREATE TABLE posts (id serial, title text)")
-      Mariaex.execute(conn, query, [])
+      query = Sphinxex.prepare!(conn, "CREATE TABLE posts (id serial, title text)")
+      Sphinxex.execute(conn, query, [])
 
-      query = Mariaex.prepare!(conn, "SELECT id FROM posts WHERE title like $1")
-      Mariaex.execute(conn, query, ["%my%"])
+      query = Sphinxex.prepare!(conn, "SELECT id FROM posts WHERE title like $1")
+      Sphinxex.execute(conn, query, ["%my%"])
   """
-  @spec execute(conn, Mariaex.Query.t, list, Keyword.t) ::
-    {:ok, Mariaex.Result.t} | {:ok, [Mariaex.Result.t]} | {:error, Mariaex.Error.t}
+  @spec execute(conn, Sphinxex.Query.t, list, Keyword.t) ::
+    {:ok, Sphinxex.Result.t} | {:ok, [Sphinxex.Result.t]} | {:error, Sphinxex.Error.t}
   def execute(conn, query, params, opts \\ []) do
     DBConnection.execute(conn, query, params, defaults(opts))
     |> arg_error_raiser
@@ -231,9 +231,9 @@ defmodule Mariaex do
 
   @doc """
   Runs an (extended) prepared query and returns the result or raises
-  `Mariaex.Error` if there was an error. See `execute/4`.
+  `Sphinxex.Error` if there was an error. See `execute/4`.
   """
-  @spec execute!(conn, Mariaex.Query.t, list, Keyword.t) :: Mariaex.Result.t | [Mariaex.Result.t]
+  @spec execute!(conn, Sphinxex.Query.t, list, Keyword.t) :: Sphinxex.Result.t | [Sphinxex.Result.t]
   def execute!(conn, query, params, opts \\ []) do
     DBConnection.execute!(conn, query, params, defaults(opts))
   end
@@ -274,8 +274,8 @@ defmodule Mariaex do
 
   ## Example
 
-      {:ok, res} = Mariaex.transaction(pid, fn(conn) ->
-        Mariaex.query!(conn, "SELECT title FROM posts", [])
+      {:ok, res} = Sphinxex.transaction(pid, fn(conn) ->
+        Sphinxex.query!(conn, "SELECT title FROM posts", [])
       end)
   """
   @spec transaction(conn, ((DBConnection.t) -> result), Keyword.t) ::
@@ -292,8 +292,8 @@ defmodule Mariaex do
 
   ## Example
 
-      {:error, :oops} = Mariaex.transaction(pid, fn(conn) ->
-        Mariaex.rollback(conn, :oops)
+      {:error, :oops} = Sphinxex.transaction(pid, fn(conn) ->
+        Sphinxex.rollback(conn, :oops)
         IO.puts "never reaches here!"
       end)
   """
@@ -305,7 +305,7 @@ defmodule Mariaex do
   """
   @spec child_spec(Keyword.t) :: Supervisor.Spec.spec
   def child_spec(opts) do
-    DBConnection.child_spec(Mariaex.Protocol, opts)
+    DBConnection.child_spec(Sphinxex.Protocol, opts)
   end
 
   ## Helpers

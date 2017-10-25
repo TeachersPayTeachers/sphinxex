@@ -1,10 +1,10 @@
-defmodule Mariaex.Coder do
+defmodule Sphinxex.Coder do
 
   defmacro __using__(_opts) do
     quote do
-      import Mariaex.Coder, only: [defcoder: 2]
+      import Sphinxex.Coder, only: [defcoder: 2]
       import Record, only: [defrecord: 2]
-      import Mariaex.Coder.Utils
+      import Sphinxex.Coder.Utils
 
       @before_compile unquote(__MODULE__)
       Module.register_attribute(__MODULE__, :decoders, accumulate: true)

@@ -1,16 +1,16 @@
 defmodule QueryTest do
   use ExUnit.Case, async: true
-  import Mariaex.TestHelper
+  import Sphinxex.TestHelper
 
   setup do
     opts = [database: "mariaex_test", username: "mariaex_user", password: "mariaex_pass", backoff_type: :stop]
-    {:ok, pid} = Mariaex.Connection.start_link(opts)
+    {:ok, pid} = Sphinxex.Connection.start_link(opts)
     {:ok, [pid: pid]}
   end
 
   test "simple query using password connection" do
     opts = [database: "mariaex_test", username: "mariaex_user", password: "mariaex_pass"]
-    {:ok, pid} = Mariaex.Connection.start_link(opts)
+    {:ok, pid} = Sphinxex.Connection.start_link(opts)
 
     context = [pid: pid]
 
@@ -23,7 +23,7 @@ defmodule QueryTest do
 
   test "connection without database" do
     opts = [username: "mariaex_user", password: "mariaex_pass", skip_database: true]
-    {:ok, pid} = Mariaex.Connection.start_link(opts)
+    {:ok, pid} = Sphinxex.Connection.start_link(opts)
 
     context = [pid: pid]
 
@@ -36,7 +36,7 @@ defmodule QueryTest do
 
     Process.flag(:trap_exit, true)
     capture_log fn ->
-      assert %Mariaex.Error{} = query("DO SLEEP(0.1)", [], timeout: 0)
+      assert %Sphinxex.Error{} = query("DO SLEEP(0.1)", [], timeout: 0)
       assert_receive {:EXIT, ^conn, {:shutdown, %DBConnection.ConnectionError{}}}
     end
   end
@@ -397,9 +397,9 @@ defmodule QueryTest do
   end
 
   test "result struct on select", context do
-    {:ok, res} = Mariaex.Connection.query(context[:pid], "SELECT 1 AS first, 10 AS last", [])
+    {:ok, res} = Sphinxex.Connection.query(context[:pid], "SELECT 1 AS first, 10 AS last", [])
 
-    assert %Mariaex.Result{} = res
+    assert %Sphinxex.Result{} = res
     assert res.command == :select
     assert res.columns == ["first", "last"]
     assert res.num_rows == 1
@@ -410,9 +410,9 @@ defmodule QueryTest do
     :ok = query("CREATE TABLE #{table} (id serial, name varchar(50))", [])
     :ok = query("INSERT INTO #{table} (id, name) VALUES(?, ?)", [1, "test_name"])
 
-    {:ok, res} = Mariaex.Connection.query(context[:pid], "SELECT id, name FROM #{table}", [], include_table_name: true)
+    {:ok, res} = Sphinxex.Connection.query(context[:pid], "SELECT id, name FROM #{table}", [], include_table_name: true)
 
-    assert %Mariaex.Result{} = res
+    assert %Sphinxex.Result{} = res
     assert res.columns == ["#{table}.id", "#{table}.name"]
   end
 
@@ -425,7 +425,7 @@ defmodule QueryTest do
     :ok = query("INSERT INTO #{table1} (id, name) VALUES(?, ?)", [1, "test_name_1"])
     :ok = query("INSERT INTO #{table2} (id, table1_id, name) VALUES(?, ?, ?)", [10, 1, "test_name_2"])
 
-    {:ok, res} = Mariaex.Connection.query(context[:pid], "SELECT * FROM #{table1} JOIN #{table2} ON #{table1}.id = #{table2}.table1_id", [], include_table_name: true)
+    {:ok, res} = Sphinxex.Connection.query(context[:pid], "SELECT * FROM #{table1} JOIN #{table2} ON #{table1}.id = #{table2}.table1_id", [], include_table_name: true)
 
     assert res.columns == ["#{table1}.id", "#{table1}.name", "#{table2}.id", "#{table2}.table1_id", "#{table2}.name"]
     assert res.num_rows == 1
@@ -437,9 +437,9 @@ defmodule QueryTest do
     :ok = query("CREATE TABLE #{table} (id serial, name varchar(50))", [])
     :ok = query("INSERT INTO #{table} (id, name) VALUES(?, ?)", [1, "test_name"])
 
-    {:ok, res} = Mariaex.Connection.query(context[:pid], "SELECT id, name FROM #{table} t1", [], include_table_name: true)
+    {:ok, res} = Sphinxex.Connection.query(context[:pid], "SELECT id, name FROM #{table} t1", [], include_table_name: true)
 
-    assert %Mariaex.Result{} = res
+    assert %Sphinxex.Result{} = res
     assert res.columns == ["t1.id", "t1.name"]
   end
 
@@ -449,19 +449,19 @@ defmodule QueryTest do
     :ok = query(~s{CREATE TABLE #{table} (num int)}, [])
     :ok = query(~s{INSERT INTO #{table} (num) VALUES (?)}, [1])
 
-    {:ok, res} = Mariaex.Connection.query(context[:pid], "UPDATE #{table} SET num = 2", [])
-    assert %Mariaex.Result{} = res
+    {:ok, res} = Sphinxex.Connection.query(context[:pid], "UPDATE #{table} SET num = 2", [])
+    assert %Sphinxex.Result{} = res
     assert res.command == :update
     assert res.num_rows == 1
 
-    {:ok, res} = Mariaex.Connection.query(context[:pid], "UPDATE #{table} SET num = 2", [])
-    assert %Mariaex.Result{} = res
+    {:ok, res} = Sphinxex.Connection.query(context[:pid], "UPDATE #{table} SET num = 2", [])
+    assert %Sphinxex.Result{} = res
     assert res.command == :update
     assert res.num_rows == 1
   end
 
   test "error struct", context do
-    {:error, %Mariaex.Error{}} = Mariaex.Connection.query(context[:pid], "SELECT 123 + `deertick`", [])
+    {:error, %Sphinxex.Error{}} = Sphinxex.Connection.query(context[:pid], "SELECT 123 + `deertick`", [])
   end
 
   test "insert", context do
@@ -485,7 +485,7 @@ defmodule QueryTest do
   end
 
   test "connection works after failure", context do
-    assert %Mariaex.Error{} = query("wat", [])
+    assert %Sphinxex.Error{} = query("wat", [])
     assert query("SELECT 'syntax'", []) == [["syntax"]]
   end
 

@@ -1,4 +1,4 @@
-defmodule Mariaex.Mixfile do
+defmodule Sphinxex.Mixfile do
   use Mix.Project
 
   def project do
@@ -6,7 +6,7 @@ defmodule Mariaex.Mixfile do
      version: "0.7.8",
      elixir: "~> 1.0",
      deps: deps(),
-     name: "Mariaex",
+     name: "Sphinxex",
      source_url: "https://github.com/liveforeverx/mariaex",
      test_coverage: [tool: Coverex.Task, coveralls: true],
      description: description(),

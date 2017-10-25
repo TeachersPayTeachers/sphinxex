@@ -1,4 +1,4 @@
-defmodule Mariaex.Connection.Ssl do
+defmodule Sphinxex.Connection.Ssl do
 
   def recv(sock, bytes, timeout), do: :ssl.recv(sock, bytes, timeout)
 

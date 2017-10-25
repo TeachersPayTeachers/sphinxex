@@ -1,4 +1,4 @@
-defmodule Mariaex.Query do
+defmodule Sphinxex.Query do
   @moduledoc """
   Query struct returned from a successfully prepared query. Its fields are:
 
@@ -23,14 +23,14 @@ defmodule Mariaex.Query do
             connection_ref: nil
 end
 
-defimpl DBConnection.Query, for: Mariaex.Query do
+defimpl DBConnection.Query, for: Sphinxex.Query do
   @moduledoc """
   Implementation of `DBConnection.Query` protocol.
   """
   use Bitwise
-  import Mariaex.Coder.Utils
-  alias Mariaex.Messages
-  alias Mariaex.Column
+  import Sphinxex.Coder.Utils
+  alias Sphinxex.Messages
+  alias Sphinxex.Column
 
   @doc """
   Parse a query.
@@ -55,17 +55,17 @@ defimpl DBConnection.Query, for: Mariaex.Query do
 
   This function is called to encode a query before it is executed.
   """
-  def encode(%Mariaex.Query{types: nil} = query, _params, _opts) do
+  def encode(%Sphinxex.Query{types: nil} = query, _params, _opts) do
     raise ArgumentError, "query #{inspect query} has not been prepared"
   end
-  def encode(%Mariaex.Query{type: :binary, parameter_types: parameter_types, binary_as: binary_as} = query, params, _opts) do
+  def encode(%Sphinxex.Query{type: :binary, parameter_types: parameter_types, binary_as: binary_as} = query, params, _opts) do
     if length(params) == length(parameter_types) do
       parameter_types |> Enum.zip(params) |> parameters_to_binary(binary_as)
     else
       raise ArgumentError, "parameters must be of length #{length params} for query #{inspect query}"
     end
   end
-  def encode(%Mariaex.Query{type: :text}, params, _opts) do
+  def encode(%Sphinxex.Query{type: :text}, params, _opts) do
     params
   end
 
@@ -147,7 +147,7 @@ defimpl DBConnection.Query, for: Mariaex.Query do
   @unsigned_flag 0x20
 
   def decode(_, %{rows: nil} = res, _), do: res
-  def decode(%Mariaex.Query{statement: statement, type: query_type} = query, res_list, opts) when is_list(res_list) do
+  def decode(%Sphinxex.Query{statement: statement, type: query_type} = query, res_list, opts) when is_list(res_list) do
     res_list
     |> Enum.map(fn result -> decode(query, result, opts) end)
     |> case do # if only 1 result, destructure list
@@ -155,18 +155,18 @@ defimpl DBConnection.Query, for: Mariaex.Query do
       xs -> xs
     end
   end
-  def decode(%Mariaex.Query{statement: statement, type: query_type}, {res, types}, opts) do
-    command = Mariaex.Protocol.get_command(statement)
+  def decode(%Sphinxex.Query{statement: statement, type: query_type}, {res, types}, opts) do
+    command = Sphinxex.Protocol.get_command(statement)
     if command in @commands_without_rows do
-      %Mariaex.Result{res | command: command, rows: nil}
+      %Sphinxex.Result{res | command: command, rows: nil}
     else
       mapper = opts[:decode_mapper] || fn x -> x end
-      %Mariaex.Result{rows: rows} = res
+      %Sphinxex.Result{rows: rows} = res
       types = Enum.reverse(types)
       decoded = do_decode(rows, types, query_type, mapper)
       include_table_name = opts[:include_table_name]
       columns = for %Column{} = column <- types, do: column_name(column, include_table_name)
-      %Mariaex.Result{res | command: command,
+      %Sphinxex.Result{res | command: command,
                             rows: decoded,
                             columns: columns,
                             num_rows: length(decoded)}
@@ -193,7 +193,7 @@ defimpl DBConnection.Query, for: Mariaex.Query do
     Enum.reverse(row)
   end
   def decode_text_rows(unparsed, row, [this_type | next_types] = types) do
-    {raw, next} = Mariaex.Coder.Utils.length_encoded_string(unparsed)
+    {raw, next} = Sphinxex.Coder.Utils.length_encoded_string(unparsed)
     value = handle_decode_text_rows(Messages.__type__(:type, this_type.type), raw)
     decode_text_rows(next, [value | row], next_types)
   end
@@ -345,8 +345,8 @@ defimpl DBConnection.Query, for: Mariaex.Query do
   end
 end
 
-defimpl String.Chars, for: Mariaex.Query do
-  def to_string(%Mariaex.Query{statement: statement}) do
+defimpl String.Chars, for: Sphinxex.Query do
+  def to_string(%Sphinxex.Query{statement: statement}) do
     IO.iodata_to_binary(statement)
   end
 end

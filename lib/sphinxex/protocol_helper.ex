@@ -1,4 +1,4 @@
-defmodule Mariaex.ProtocolHelper do
+defmodule Sphinxex.ProtocolHelper do
   @doc"""
   Define a packet handler, `recv_func/2`.
   If a packet is received successfully, it will pass `(packet, request, state)` from MariaDB to `handle_func/3`.
@@ -12,7 +12,7 @@ defmodule Mariaex.ProtocolHelper do
             unquote(handle_func)(packet, request, state)
           {:error, reason} ->
             {sock_mod, _} = state.sock
-            Mariaex.Protocol.do_disconnect(state, {sock_mod.tag, "recv", reason, ""})
+            Sphinxex.Protocol.do_disconnect(state, {sock_mod.tag, "recv", reason, ""})
         end
       end
     end

@@ -1,12 +1,12 @@
-defmodule Mariaex.Protocol do
+defmodule Sphinxex.Protocol do
   @moduledoc false
 
-  alias Mariaex.Cache
-  alias Mariaex.LruCache
-  alias Mariaex.Query
-  alias Mariaex.Column
-  import Mariaex.Messages
-  import Mariaex.ProtocolHelper
+  alias Sphinxex.Cache
+  alias Sphinxex.LruCache
+  alias Sphinxex.Query
+  alias Sphinxex.Column
+  import Sphinxex.Messages
+  import Sphinxex.ProtocolHelper
 
   use DBConnection
   use Bitwise
@@ -63,7 +63,7 @@ defmodule Mariaex.Protocol do
   def connect(opts) do
     opts         = default_opts(opts)
     sock_type    = opts[:sock_type] |> Atom.to_string |> String.capitalize()
-    sock_mod     = Module.concat(Mariaex.Connection, sock_type)
+    sock_mod     = Module.concat(Sphinxex.Connection, sock_type)
     host         = opts[:hostname]
     host         = if is_binary(host), do: String.to_char_list(host), else: host
     connect_opts = [host, opts[:port], opts[:socket_options], opts[:timeout]]
@@ -83,7 +83,7 @@ defmodule Mariaex.Protocol do
                         opts: opts}
         handshake_recv(s, %{opts: opts})
       {:error, reason} ->
-        {:error, %Mariaex.Error{message: "tcp connect: #{reason}"}}
+        {:error, %Sphinxex.Error{message: "tcp connect: #{reason}"}}
     end
   end
 
@@ -121,7 +121,7 @@ defmodule Mariaex.Protocol do
         handle_handshake(packet, request, state)
       {:error, reason} ->
         {sock_mod, _} = state.sock
-        Mariaex.Protocol.do_disconnect(state, {sock_mod.tag, "recv", reason, ""}) |> connected()
+        Sphinxex.Protocol.do_disconnect(state, {sock_mod.tag, "recv", reason, ""}) |> connected()
     end
   end
 
@@ -189,9 +189,9 @@ defmodule Mariaex.Protocol do
         # switch to the ssl connection module
         # set the socket
         # move ssl_conn_state to :connected
-        {:ok, %{s | sock: {Mariaex.Connection.Ssl, ssl_sock}, ssl_conn_state: :connected}}
+        {:ok, %{s | sock: {Sphinxex.Connection.Ssl, ssl_sock}, ssl_conn_state: :connected}}
       {:error, reason} ->
-        {:error, %Mariaex.Error{message: "failed to upgraded socket: #{inspect reason}"}}
+        {:error, %Sphinxex.Error{message: "failed to upgraded socket: #{inspect reason}"}}
     end
   end
 
@@ -407,7 +407,7 @@ defmodule Mariaex.Protocol do
       text_query_recv(%{s | state: :text_rows, catch_eof: false}, query)
     else
       {:packet, _, _, {:eof_resp, _, _, status_flags, _}, _} = msg
-      this_result = {%Mariaex.Result{rows: s.rows}, query.types}
+      this_result = {%Sphinxex.Result{rows: s.rows}, query.types}
       # The 0x08 status flag bit is the MORE_RESULTS_EXISTS flag, indicating
       # there are additional result sets to read.
       # see also https://dev.mysql.com/doc/internals/en/status-flags.html
@@ -452,7 +452,7 @@ defmodule Mariaex.Protocol do
       catch_eof ->
         binary_query_recv(%{s | catch_eof: false}, query)
       true ->
-        {:ok, {%Mariaex.Result{rows: s.rows}, query.types}, clean_state(s)}
+        {:ok, {%Sphinxex.Result{rows: s.rows}, query.types}, clean_state(s)}
     end
   end
   defp handle_binary_query(packet(msg: bin_row(row: row)), query, s = %{rows: acc}) do
@@ -465,7 +465,7 @@ defmodule Mariaex.Protocol do
   defp handle_binary_query(packet, query, state), do: handle_error(packet, query, state)
 
   defp handle_ok_packet(packet(msg: ok_resp(affected_rows: affected_rows, last_insert_id: last_insert_id)), _query, s) do
-    {:ok, {%Mariaex.Result{columns: [], rows: s.rows, num_rows: affected_rows, last_insert_id: last_insert_id}, nil}, clean_state(s)}
+    {:ok, {%Sphinxex.Result{columns: [], rows: s.rows, num_rows: affected_rows, last_insert_id: last_insert_id}, nil}, clean_state(s)}
   end
 
   defp add_column(query, column_definition_41(type: type, name: name, flags: flags, table: table)) do
@@ -544,11 +544,11 @@ defmodule Mariaex.Protocol do
   Do disconnect
   """
   def do_disconnect(s, {tag, action, reason, buffer}) do
-    err = Mariaex.Error.exception(tag: tag, action: action, reason: reason)
+    err = Sphinxex.Error.exception(tag: tag, action: action, reason: reason)
     do_disconnect(s, err, buffer)
   end
 
-  defp do_disconnect(%{connection_id: connection_id} = state, %Mariaex.Error{} = err, buffer) do
+  defp do_disconnect(%{connection_id: connection_id} = state, %Sphinxex.Error{} = err, buffer) do
     {:disconnect, %{err | connection_id: connection_id}, %{state | buffer: buffer}}
   end
 
@@ -561,7 +561,7 @@ defmodule Mariaex.Protocol do
       msg_send(old_password(password: password), state, seqnum + 3)
       state
     else
-      {:error, %Mariaex.Error{message: "MySQL server is requesting the old and insecure pre-4.1 auth mechanism. " <>
+      {:error, %Sphinxex.Error{message: "MySQL server is requesting the old and insecure pre-4.1 auth mechanism. " <>
                                        "Upgrade the user password or use the `insecure_auth: true` option."}}
     end
   end
@@ -687,9 +687,9 @@ defmodule Mariaex.Protocol do
   end
 
   defp abort_statement(s, query, code, message) do
-    abort_statement(s, query, %Mariaex.Error{mariadb: %{code: code, message: message}})
+    abort_statement(s, query, %Sphinxex.Error{mariadb: %{code: code, message: message}})
   end
-  defp abort_statement(s, query, error = %Mariaex.Error{}) do
+  defp abort_statement(s, query, error = %Sphinxex.Error{}) do
     {:error, error, close_statement(s, query)}
   end
 

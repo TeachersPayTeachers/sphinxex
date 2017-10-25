@@ -1,4 +1,4 @@
-defmodule Mariaex.Column do
+defmodule Sphinxex.Column do
   @moduledoc """
   Struct build for column definitions
   """

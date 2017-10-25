@@ -1,8 +1,8 @@
-defmodule Mariaex.Messages do
+defmodule Sphinxex.Messages do
   @moduledoc false
 
   import Record, only: [defrecord: 2]
-  use Mariaex.Coder
+  use Sphinxex.Coder
   require Decimal
 
   @protocol_vsn_major 3
