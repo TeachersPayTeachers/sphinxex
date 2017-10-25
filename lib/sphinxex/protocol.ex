@@ -486,7 +486,7 @@ defmodule Sphinxex.Protocol do
         name = @reserved_prefix <> "BEGIN"
         handle_transaction(name, :begin, opts, s)
       :savepoint   ->
-        name = @reserved_prefix <> "SAVEPOINT mariaex_savepoint"
+        name = @reserved_prefix <> "SAVEPOINT sphinxex_savepoint"
         handle_savepoint([name], [:savepoint], opts, s)
     end
   end
@@ -500,7 +500,7 @@ defmodule Sphinxex.Protocol do
         name = @reserved_prefix <> "COMMIT"
         handle_transaction(name, :commit, opts, s)
       :savepoint ->
-        name = @reserved_prefix <> "RELEASE SAVEPOINT mariaex_savepoint"
+        name = @reserved_prefix <> "RELEASE SAVEPOINT sphinxex_savepoint"
         handle_savepoint([name], [:release], opts, s)
     end
   end
@@ -514,8 +514,8 @@ defmodule Sphinxex.Protocol do
         name = @reserved_prefix <> "ROLLBACK"
         handle_transaction(name, :rollback, opts, s)
       :savepoint ->
-        names = [@reserved_prefix <> "ROLLBACK TO SAVEPOINT mariaex_savepoint",
-                 @reserved_prefix <> "RELEASE SAVEPOINT mariaex_savepoint"]
+        names = [@reserved_prefix <> "ROLLBACK TO SAVEPOINT sphinxex_savepoint",
+                 @reserved_prefix <> "RELEASE SAVEPOINT sphinxex_savepoint"]
         handle_savepoint(names, [:rollback, :release], opts, s)
     end
   end

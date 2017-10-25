@@ -2,12 +2,12 @@ defmodule Sphinxex.Mixfile do
   use Mix.Project
 
   def project do
-    [app: :mariaex,
+    [app: :sphinxex,
      version: "0.7.8",
      elixir: "~> 1.0",
      deps: deps(),
      name: "Sphinxex",
-     source_url: "https://github.com/liveforeverx/mariaex",
+     source_url: "https://github.com/liveforeverx/sphinxex",
      test_coverage: [tool: Coverex.Task, coveralls: true],
      description: description(),
      package: package()]
@@ -31,6 +31,6 @@ defmodule Sphinxex.Mixfile do
   defp package do
     [maintainers: ["Dmitry Russ(Aleksandrov)"],
      licenses: ["Apache 2.0"],
-     links: %{"Github" => "https://github.com/xerions/mariaex"}]
+     links: %{"Github" => "https://github.com/xerions/sphinxex"}]
   end
 end

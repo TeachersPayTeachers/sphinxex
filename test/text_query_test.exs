@@ -3,7 +3,7 @@ defmodule TextQueryTest do
   import Sphinxex.TestHelper
 
   setup_all do
-    opts = [database: "mariaex_test", username: "mariaex_user", password: "mariaex_pass", backoff_type: :stop]
+    opts = [database: "sphinxex_test", username: "sphinxex_user", password: "sphinxex_pass", backoff_type: :stop]
     {:ok, pid} = Sphinxex.Connection.start_link(opts)
     # drop = "DROP TABLE IF EXISTS test"
     # {:ok, _} = Sphinxex.execute(pid, %Sphinxex.Query{type: :text, statement: drop}, [])

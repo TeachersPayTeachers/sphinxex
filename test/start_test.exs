@@ -4,11 +4,11 @@ defmodule StartTest do
   test "connection_errors" do
     Process.flag :trap_exit, true
     assert {:error, {%Sphinxex.Error{mariadb: %{message: "Unknown database 'non_existing'"}}, _}} =
-      Sphinxex.Connection.start_link(username: "mariaex_user", password: "mariaex_pass", database: "non_existing", sync_connect: true, backoff_type: :stop)
+      Sphinxex.Connection.start_link(username: "sphinxex_user", password: "sphinxex_pass", database: "non_existing", sync_connect: true, backoff_type: :stop)
     assert {:error, {%Sphinxex.Error{mariadb: %{message: "Access denied for user " <> _}}, _}} =
-      Sphinxex.Connection.start_link(username: "non_existing", database: "mariaex_test", sync_connect: true, backoff_type: :stop)
+      Sphinxex.Connection.start_link(username: "non_existing", database: "sphinxex_test", sync_connect: true, backoff_type: :stop)
     assert {:error, {%Sphinxex.Error{message: "tcp connect: econnrefused"}, _}} =
-      Sphinxex.Connection.start_link(username: "mariaex_user", password: "mariaex_pass", database: "mariaex_test", port: 60999, sync_connect: true, backoff_type: :stop)
+      Sphinxex.Connection.start_link(username: "sphinxex_user", password: "sphinxex_pass", database: "sphinxex_test", port: 60999, sync_connect: true, backoff_type: :stop)
   end
 
   ## Tests tagged with :ssl_tests are excluded from running by default (see test_helper.exs)
@@ -16,9 +16,9 @@ defmodule StartTest do
   ## https://dev.mysql.com/doc/refman/5.7/en/creating-ssl-files-using-openssl.html
   @tag :ssl_tests
   test "ssl_connection_errors" do
-    test_opts = [username: "mariaex_user",
-                     password: "mariaex_pass",
-                     database: "mariaex_test",
+    test_opts = [username: "sphinxex_user",
+                     password: "sphinxex_pass",
+                     database: "sphinxex_test",
                      sync_connect: true,
                      ssl: true,
                      ssl_opts: [cacertfile: "",

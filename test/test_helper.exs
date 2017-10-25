@@ -27,11 +27,11 @@ sql = """
 """
 
 cmds = [
-  ~s(mysql -u root #{mysql_pass_switch} -e "GRANT ALL ON *.* TO 'mariaex_user'@'localhost' IDENTIFIED BY 'mariaex_pass';"),
-  ~s(mysql -u root #{mysql_pass_switch} -e "DROP DATABASE IF EXISTS mariaex_test;"),
-  ~s(mysql -u root #{mysql_pass_switch} -e "CREATE DATABASE mariaex_test DEFAULT CHARACTER SET 'utf8' COLLATE 'utf8_general_ci'";),
-  ~s(mysql -u root #{mysql_pass_switch} mariaex_test -e "#{sql}"),
-  ~s(mysql -u mariaex_user -pmariaex_pass mariaex_test -e "#{sql}")
+  ~s(mysql -u root #{mysql_pass_switch} -e "GRANT ALL ON *.* TO 'sphinxex_user'@'localhost' IDENTIFIED BY 'sphinxex_pass';"),
+  ~s(mysql -u root #{mysql_pass_switch} -e "DROP DATABASE IF EXISTS sphinxex_test;"),
+  ~s(mysql -u root #{mysql_pass_switch} -e "CREATE DATABASE sphinxex_test DEFAULT CHARACTER SET 'utf8' COLLATE 'utf8_general_ci'";),
+  ~s(mysql -u root #{mysql_pass_switch} sphinxex_test -e "#{sql}"),
+  ~s(mysql -u sphinxex_user -psphinxex_pass sphinxex_test -e "#{sql}")
 ]
 
 Enum.each(cmds, fn cmd ->

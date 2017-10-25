@@ -1,4 +1,4 @@
-Sphinxex [![Build Status](https://travis-ci.org/xerions/mariaex.svg)](https://travis-ci.org/xerions/mariaex) [![Coverage Status](https://coveralls.io/repos/xerions/mariaex/badge.svg?branch=master&service=github)](https://coveralls.io/github/xerions/mariaex?branch=master) [![Deps Status](https://beta.hexfaktor.org/badge/all/github/xerions/mariaex.svg)](https://beta.hexfaktor.org/github/xerions/mariaex)
+Sphinxex [![Build Status](https://travis-ci.org/xerions/sphinxex.svg)](https://travis-ci.org/xerions/sphinxex) [![Coverage Status](https://coveralls.io/repos/xerions/sphinxex/badge.svg?branch=master&service=github)](https://coveralls.io/github/xerions/sphinxex?branch=master) [![Deps Status](https://beta.hexfaktor.org/badge/all/github/xerions/sphinxex.svg)](https://beta.hexfaktor.org/github/xerions/sphinxex)
 =======
 
 ## Usage
@@ -7,7 +7,7 @@ Add Sphinxex as a dependency in your `mix.exs` file.
 
 ```elixir
 def deps do
-  [{:mariaex, "~> 0.7.3"} ]
+  [{:sphinxex, "~> 0.7.3"} ]
 end
 ```
 
